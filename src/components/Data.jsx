@@ -10,6 +10,23 @@ const Container = styled.div`
   align-items:center;
   width: 100vw;
 `;
+const Header = styled.div`
+  display: flex;
+  flex-direction:row;
+
+  h1{
+    margin:20px;
+  }
+  
+  .btn{
+    background-color:whitesmoke;
+    width:100px;
+    height:50px;
+    margin:30px;
+  }
+   
+`;
+
 
 const FormContainer = styled.div`
   width: 50vw;
@@ -62,8 +79,41 @@ const DeleteButton = styled.button`
   cursor: pointer;
 `;
 
+const DetailsContainer = styled.div`
+display: flex;
+flex-direction:column;
+align-items: center;
+  margin-top: 20px;
+  justify-content:center;
+  width:100vw;
+height:100vh;
+`;
+
+const DetailsButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+
+ 
+
+`;
+
+const BackButton = styled.button`
+  margin-top: 10px;
+  background-color:whitesmoke;
+  border:1px solid black;
+`;
+const DetailsButton = styled.button`
+ margin:2px;
+
+  background-color: #2196f3;
+  color: white;
+  padding: 5px 10px;
+  cursor: pointer;
+`;
+
 const Data = () => {
     const navigate=useNavigate();
+    const [selectedVendor, setSelectedVendor] = useState(null);
   const [formValues, setFormValues] = useState({
     vendorName: '',
     bankAccountNo: '',
@@ -106,16 +156,37 @@ const Data = () => {
     setVendorList(updatedVendorList);
   };
 
+  const handlelogout=()=>{
+    localStorage.clear();
+    navigate("/")
+  }
+
   const token=localStorage.getItem("token");
   if(!token){
     navigate("/");
   }
+  const handleDetailsClick = (index) => {
+    setSelectedVendor(vendorList[index]);
+  };
   return (
-     
-      <Container>
-        <div>
+    <>
+
+    {selectedVendor ? (<DetailsContainer>
+        <h2>Details for {selectedVendor.vendorName}</h2>
+        <p>Account No: {selectedVendor.bankAccountNo}</p>
+        <p>Bank Name: {selectedVendor.bankName}</p>
+        <p>Address 1: {selectedVendor.addressLine1 }</p>
+        <p>Address 2: {selectedVendor.addressLine2}</p>
+        <p>city: {selectedVendor.city}</p>
+        <p>country: {selectedVendor.country}</p>
+        <p>zipcode: {selectedVendor.zipCode}</p>
+        <BackButton onClick={() => setSelectedVendor(null)}>Back to Vendor List</BackButton>
+      </DetailsContainer>
+    ) :( <Container>
+        <Header>
         <h1>Add vendor details</h1>
-        </div>
+        <button className='btn'onClick={handlelogout}>logout</button>
+        </Header>
         <FormContainer>
           <Form onSubmit={handleAddVendor}>
             <Input type="text" name="vendorName" placeholder="Vendor Name" value={formValues.vendorName} onChange={handleInputChange} />
@@ -141,7 +212,9 @@ const Data = () => {
                   <p>bank:{vendor.bankName}</p>
                 </div>
                 <div>
-                   
+                <DetailsButton onClick={() => handleDetailsClick(index)}>
+                      Details
+                    </DetailsButton>
                   <DeleteButton onClick={() => handleDeleteVendor(index)}>
                     Delete
                   </DeleteButton>
@@ -153,7 +226,8 @@ const Data = () => {
 
  
       </Container>
-     
+  )}
+     </>
   );
 };
 
